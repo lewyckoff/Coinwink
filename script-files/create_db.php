@@ -1,7 +1,7 @@
 <?php
 
 //Connect to Mysql
-include_once "coinwink_sql.php";
+include_once "../wp-config.php";
 
 // sql to create 'coinwink' table
 $sql = "CREATE TABLE `coinwink` (
@@ -42,31 +42,31 @@ $sql33 = "INSERT INTO `coinwink_html`(`html`) VALUES ('')";
 
 // execute queries
 
-if ($conn->query($sql) === TRUE) {
+if ($wpdb->query($sql) === TRUE) {
     echo "Table 'coinwink' created successfully";
 } else {
-    echo "Error creating table: " . $conn->error;
+    echo "Error creating table: " . $wpdb->show_errors();
 }
 
 echo "<br />";
 
-if ($conn->query($sql2) === TRUE) {
+if ($wpdb->query($sql2) === TRUE) {
     echo "Table 'coinwink_json' created successfully";
 } else {
-    echo "Error creating table: " . $conn->error;
+    echo "Error creating table: " . $wpdb->show_errors();
 }
 
-$conn->query($sql22);
+$wpdb->query($sql22);
 
 echo "<br />";
 
-if ($conn->query($sql3) === TRUE) {
+if ($wpdb->query($sql3) === TRUE) {
     echo "Table 'coinwink_html' created successfully";
 } else {
-    echo "Error creating table: " . $conn->error;
+    echo "Error creating table: " . $wpdb->show_errors();
 }
 
-$conn->query($sql33);
+$wpdb->query($sql33);
 
-$conn->close();
+$wpdb->close();
 ?>

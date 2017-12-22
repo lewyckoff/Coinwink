@@ -1,13 +1,13 @@
 <?php
 
 // Connect to Mysql
-include_once "coinwink_sql.php";
+include_once "../wp-config.php";
 
 
 // Select all data from alerts database
 $sql = "SELECT * FROM coinwink";
-$resultdb = $conn->query($sql);
-$masyvas = (mysqli_fetch_assoc($resultdb));
+$resultdb = $wpdb->query($sql);
+$masyvas = $wpdb->get_results("SELECT * FROM videos", ARRAY_A);
 
 
 // Get data from coinmarketcap.com
@@ -16,7 +16,7 @@ $ch = curl_init();
 // set url 
 curl_setopt($ch, CURLOPT_URL, "https://api.coinmarketcap.com/v1/ticker/?limit=100"); 
 //return the transfer as a string 
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); 
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 // $output contains the output string 
 $output = curl_exec($ch); 
 // close curl resource to free up system resources 
@@ -27,11 +27,11 @@ curl_close($ch);
 $outputdecoded = json_decode($output, true);
 $output2 = serialize($outputdecoded);
 $sqljson = "UPDATE coinwink_json SET json = '$output2'";
-$conn->query($sqljson);
+$wpdb->query($sqljson);
 
 
 // Checking alerts and sending e-mails
-foreach ($resultdb as $row) {
+foreach ($masyvas as $row) {
     foreach ($outputdecoded as $jsoncoin) {
         if ($jsoncoin['name'] == $row['coin']) {
             if ($row['below_currency'] == 'BTC') {
@@ -57,7 +57,7 @@ Coinwink';
           
                 $ID = $row['ID'];
                 $sqlbelow = "UPDATE coinwink SET below_sent=1 WHERE ID = $ID";
-                $conn->query($sqlbelow);
+                $wpdb->query($sqlbelow);
                 
                 }
 }
@@ -86,7 +86,7 @@ Coinwink';
                 
                 $ID = $row['ID'];
                 $sqlbelow = "UPDATE coinwink SET below_sent=1 WHERE ID = $ID";
-                $conn->query($sqlbelow);
+                $wpdb->query($sqlbelow);
                 
                 }
 }
@@ -116,7 +116,7 @@ Coinwink';
                 
                 $ID = $row['ID'];
                 $sqlabove = "UPDATE coinwink SET above_sent=1 WHERE ID = $ID";
-                $conn->query($sqlabove);
+                $wpdb->query($sqlabove);
                 
                 }
 }                
@@ -150,7 +150,7 @@ Coinwink';
                 
                 $ID = $row['ID'];
                 $sqlabove = "UPDATE coinwink SET above_sent=1 WHERE ID = $ID";
-                $conn->query($sqlabove);
+                $wpdb->query($sqlabove);
 
                 }
 }    
@@ -165,13 +165,13 @@ Coinwink';
 // Delete e-mail addresses that have no active alerts left
 
 $delete_emails = "DELETE FROM coinwink WHERE (below_sent=1 AND above_sent=1)";
-$conn->query($delete_emails);
+$wpdb->query($delete_emails);
 
 $delete_emails = "DELETE FROM coinwink WHERE (below_sent=1 AND above_sent='' AND above='')";
-$conn->query($delete_emails);
+$wpdb->query($delete_emails);
 
 $delete_emails = "DELETE FROM coinwink WHERE (below_sent='' AND below='' AND above_sent=1)";
-$conn->query($delete_emails);
+$wpdb->query($delete_emails);
 
 
 ?>
