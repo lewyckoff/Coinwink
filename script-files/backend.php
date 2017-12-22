@@ -7,7 +7,7 @@ include_once "../wp-config.php";
 // Select all data from alerts database
 $sql = "SELECT * FROM coinwink";
 $resultdb = $wpdb->query($sql);
-$masyvas = $wpdb->get_results("SELECT * FROM videos", ARRAY_A);
+$masyvas = $wpdb->get_results($resultdb, ARRAY_A);
 
 
 // Get data from coinmarketcap.com
